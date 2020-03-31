@@ -10,7 +10,7 @@ import UIKit
 
 class NewPlaceViewController: UITableViewController {
     
-    var newPlace = Place()
+    var currentPlace: Place?
     var imageIsChanged = false
     
     @IBOutlet var placeName: UITextField!
@@ -22,9 +22,7 @@ class NewPlaceViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        DispatchQueue.main.async {
-            self.newPlace.savePlaces()
-        }
+     
         
         tableView.tableFooterView = UIView()
         
@@ -32,6 +30,8 @@ class NewPlaceViewController: UITableViewController {
         saveButton.isEnabled = false
 
         placeName.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
+        setupEditScreen()
+        
     }
 // MARK: Table view delegate
     
@@ -69,7 +69,8 @@ class NewPlaceViewController: UITableViewController {
             view.endEditing(true)
         }
     }
-    func saveNewPlace() {
+    func savePlace() {
+       
         
         var  image: UIImage?
         
@@ -78,20 +79,59 @@ class NewPlaceViewController: UITableViewController {
         } else {
             image = #imageLiteral(resourceName: "imagePlaceholder")
         }
+        let imageData = image?.pngData()
         
-//        newPlace = Place(name: placeName.text!,
-//                         location: placeLocation.text,
-//                         tupe: placeType.text,
-//                         image: image,
-//                         restaurantImage: nil)
-//
+        let newPlace = Place(name: placeName.text!,
+                             location: placeLocation.text,
+                             tupe: placeType.text,
+                             imageData: imageData)
+        if currentPlace != nil {
+            try! realm.write {
+                currentPlace?.name = newPlace.name
+                currentPlace?.location = newPlace.location
+                currentPlace?.tupe = newPlace.tupe
+                currentPlace?.imageData = newPlace.imageData
+            }
+        } else {
+           StorageManager.saveObject(newPlace)
+        }
         
     }
-  
+    
+    private func setupEditScreen() {
+        if currentPlace != nil {
+            
+            setupNavigationBar()
+            imageIsChanged = true 
+            
+            guard let data = currentPlace?.imageData , let image = UIImage(data: data) else { return }
+            
+            placeImage.image = image
+            placeImage.contentMode = .scaleAspectFill
+            placeName.text = currentPlace?.name
+            placeLocation.text = currentPlace?.location
+            placeType.text = currentPlace?.tupe
+        }
+    }
+  private func setupNavigationBar() {
+    
+    if let topItem = navigationController?.navigationBar.topItem {
+        topItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+    }
+    navigationItem.leftBarButtonItem = nil
+    title = currentPlace?.name
+    saveButton.isEnabled = true
+    
+     
+      
+  }
     @IBAction func cancelAction(_ sender: Any) {
         dismiss(animated: true)
     }
 }
+
+
+
 
 
 // MARK: Text field delegate
