@@ -12,11 +12,11 @@ class MainViewController: UITableViewController {
     
 
     
-    var places = Place.getPlaces()
+//    var places = Place.getPlaces()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+  
        
     }
 
@@ -24,27 +24,27 @@ class MainViewController: UITableViewController {
 
 
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-                return places.count
-    }
+//    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//                return places.count
+//    }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
         
-        let place = places[indexPath.row]
+//        let place = places[indexPath.row]
         
         
-        cell.nameLabel.text = place.name
-        cell.locationLable.text = place.location
-        cell.typeLabel.text = place.tupe
-        
-        if place.image == nil {
-           cell.imageOfPlace.image = UIImage.init(named: place.restaurantImage!)
-        } else {
-            cell.imageOfPlace.image = place.image
-        }
-        
+//        cell.nameLabel.text = place.name
+//        cell.locationLable.text = place.location
+//        cell.typeLabel.text = place.tupe
+//
+//        if place.image == nil {
+//           cell.imageOfPlace.image = UIImage.init(named: place.restaurantImage!)
+//        } else {
+//            cell.imageOfPlace.image = place.image
+//        }
+//
         
         
         
@@ -72,7 +72,7 @@ class MainViewController: UITableViewController {
         guard let newPlaceVC = segue.source as? NewPlaceViewController else {return}
         
         newPlaceVC.saveNewPlace()
-        places.append(newPlaceVC.newPlace!)
+//        places.append(newPlaceVC.newPlace!)
         tableView.reloadData()
     }
     
