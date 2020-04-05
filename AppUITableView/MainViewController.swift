@@ -14,11 +14,17 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     
     @IBOutlet var tableView: UITableView!
+    @IBOutlet var segmentedControl: UISegmentedControl!
+    
+    @IBOutlet var reversSortingButton: UIBarButtonItem!
+    
     var places: Results<Place>!
+    var ascendingSorting = true
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-  
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
         places = realm.objects(Place.self)
     }
 
@@ -96,7 +102,30 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     
+    @IBAction func sortSelection(_ sender: UISegmentedControl) {
+        sorting()
+        
+    }
     
+    @IBAction func reverseSorting(_ sender: Any) {
+        ascendingSorting.toggle()
+        if ascendingSorting {
+            reversSortingButton.image = #imageLiteral(resourceName: "AZ")
+        } else {
+            reversSortingButton.image = #imageLiteral(resourceName: "ZA")
+        }
+        
+        sorting()
+        
+        
+    }
     
-    
+    private func sorting() {
+        if segmentedControl.selectedSegmentIndex == 0{
+            places = places.sorted(byKeyPath: "date", ascending: ascendingSorting)
+        } else {
+          places = places.sorted(byKeyPath: "name", ascending: ascendingSorting)
+        }
+        tableView.reloadData()
+    }
 }
